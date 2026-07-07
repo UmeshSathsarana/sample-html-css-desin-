@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wickramasinghe A/L Accounting Class</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAFBFF;
+    --surface:#FFFFFF;
+    --ink:#0F172A;
+    --ink-soft:#5B6478;
+    --ink-faint:#94A0B4;
+    --indigo:#4F46E5;
+    --cyan:#06B6D4;
+    --lime:#22C55E;
+    --coral:#FB7185;
+    --amber:#F59E0B;
+    --border:#E7EAF3;
+    --grad-cool: linear-gradient(135deg,#4F46E5 0%,#06B6D4 100%);
+    --grad-warm: linear-gradient(135deg,#FB7185 0%,#F59E0B 100%);
+    --grad-green: linear-gradient(135deg,#22C55E 0%,#06B6D4 100%);
+    --shadow-sm: 0 2px 10px rgba(15,23,42,0.06);
+    --shadow-lg: 0 20px 50px -12px rgba(79,70,229,0.25);
+    --radius: 20px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',sans-serif;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--ink);margin:0;letter-spacing:-0.01em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  .container{max-width:1180px;margin:0 auto;padding:0 28px;}
+  section{padding:110px 0;position:relative;}
+  .grad-text{
+    background:var(--grad-cool);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;
+    letter-spacing:.06em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:8px;
+    padding:7px 16px;border-radius:100px;
+    background:rgba(79,70,229,0.08);color:var(--indigo);
+    margin-bottom:22px;
+  }
+  .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--grad-cool);background:var(--lime);}
+
+  /* ===== Nav ===== */
+  header{position:sticky;top:0;z-index:100;background:rgba(250,251,255,0.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);}
+  nav.container{display:flex;align-items:center;justify-content:space-between;height:82px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{
+    width:40px;height:40px;border-radius:12px;background:var(--grad-cool);
+    display:flex;align-items:center;justify-content:center;color:#fff;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;
+  }
+  .brand-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;}
+  .nav-links{display:flex;align-items:center;gap:36px;font-size:15px;font-weight:500;color:var(--ink-soft);}
+  .nav-links a:not(.btn):hover{color:var(--indigo);}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:100px;
+    font-weight:600;font-size:14.5px;border:none;cursor:pointer;transition:all .25s ease;
+  }
+  .btn-primary{background:var(--grad-cool);color:#fff;box-shadow:0 8px 20px -6px rgba(79,70,229,0.5);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px -6px rgba(79,70,229,0.6);}
+  .btn-ghost{background:var(--surface);color:var(--ink);border:1px solid var(--border);}
+  .btn-ghost:hover{border-color:var(--indigo);color:var(--indigo);}
+  .menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+  .menu-toggle span{display:block;width:24px;height:2.5px;border-radius:2px;background:var(--ink);margin:5px 0;transition:.3s;}
+
+  /* ===== Hero ===== */
+  .hero{padding:88px 0 100px;}
+  .hero::before{
+    content:"";position:absolute;top:-160px;right:-160px;width:560px;height:560px;
+    background:radial-gradient(circle,rgba(79,70,229,0.18),transparent 70%);
+    filter:blur(10px);z-index:0;
+  }
+  .hero::after{
+    content:"";position:absolute;bottom:-120px;left:-160px;width:420px;height:420px;
+    background:radial-gradient(circle,rgba(34,197,94,0.14),transparent 70%);
+    z-index:0;
+  }
+  .hero .container{display:grid;grid-template-columns:1.05fr 0.95fr;gap:60px;align-items:center;position:relative;z-index:1;}
+  .hero h1{font-size:clamp(38px,4.4vw,56px);line-height:1.08;}
+  .hero p.lede{margin:26px 0 36px;font-size:18px;color:var(--ink-soft);max-width:480px;}
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:44px;}
+  .pill-row{display:flex;gap:12px;flex-wrap:wrap;}
+  .pill{
+    display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:100px;
+    background:var(--surface);border:1px solid var(--border);box-shadow:var(--shadow-sm);
+    font-size:13.5px;font-weight:600;color:var(--ink-soft);
+  }
+  .pill .dot{width:8px;height:8px;border-radius:50%;}
+
+  /* Signature: growth chart card */
+  .chart-card{
+    background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);
+    box-shadow:var(--shadow-lg);padding:30px 28px;
+  }
+  .chart-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+  .chart-head .t1{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;}
+  .chart-head .t2{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-top:4px;}
+  .chart-badge{
+    padding:6px 12px;border-radius:100px;background:rgba(34,197,94,0.12);color:var(--lime);
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;
+  }
+  .chart-svg{width:100%;height:auto;margin-top:18px;}
+  .chart-legend{display:flex;justify-content:space-between;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-faint);}
+  .chart-foot{display:flex;gap:22px;margin-top:22px;padding-top:20px;border-top:1px solid var(--border);}
+  .chart-foot div .n{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:20px;}
+  .chart-foot div .l{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+
+  @keyframes drawLine{to{stroke-dashoffset:0;}}
+  .chart-path{stroke-dasharray:900;stroke-dashoffset:900;animation:drawLine 1.8s ease forwards .3s;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .chart-fill{opacity:0;animation:fadeUp .6s ease forwards 1.4s;}
+  .chart-dot{opacity:0;animation:fadeUp .4s ease forwards;}
+
+  /* ===== About ===== */
+  .about .container{display:grid;grid-template-columns:0.85fr 1.15fr;gap:64px;align-items:start;}
+  .about-photo{
+    aspect-ratio:4/5;border-radius:var(--radius);position:relative;overflow:hidden;
+    background:var(--grad-cool);display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,0.85);font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.1em;
+  }
+  .about-facts{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .fact{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);}
+  .fact .n{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;}
+  .fact .l{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.05em;margin-top:4px;}
+  .about-body h2{font-size:32px;margin-bottom:18px;}
+  .about-body p{color:var(--ink-soft);margin-bottom:16px;font-size:16px;max-width:560px;}
+  .chip-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;}
+  .chip{
+    padding:9px 16px;border-radius:100px;font-size:13.5px;font-weight:600;
+    background:rgba(6,182,212,0.09);color:#0891B2;border:1px solid rgba(6,182,212,0.18);
+  }
+  .chip:nth-child(2n){background:rgba(251,113,133,0.09);color:#E11D48;border-color:rgba(251,113,133,0.2);}
+  .chip:nth-child(3n){background:rgba(34,197,94,0.09);color:#15803D;border-color:rgba(34,197,94,0.2);}
+
+  /* ===== Location Tabs ===== */
+  .location-tabs{display:flex;gap:10px;margin-top:36px;flex-wrap:wrap;}
+  .loc-tab{
+    padding:12px 22px;border-radius:100px;border:1.5px solid var(--border);background:var(--surface);
+    font-family:'Inter',sans-serif;font-weight:600;font-size:14px;color:var(--ink-soft);cursor:pointer;
+    transition:all .25s ease;
+  }
+  .loc-tab:hover{border-color:var(--indigo);color:var(--indigo);}
+  .loc-tab.active{background:var(--grad-cool);border-color:transparent;color:#fff;box-shadow:0 8px 18px -6px rgba(79,70,229,0.45);}
+
+  /* ===== Timetable (Accordion) ===== */
+  .accordion{margin-top:44px;display:flex;flex-direction:column;gap:14px;}
+  .acc-item{
+    background:var(--surface);border:1px solid var(--border);border-radius:18px;
+    overflow:hidden;box-shadow:var(--shadow-sm);transition:box-shadow .25s ease;
+  }
+  .acc-item.open{box-shadow:var(--shadow-lg);}
+  .acc-head{
+    display:flex;align-items:center;gap:20px;padding:22px 26px;cursor:pointer;
+    background:none;border:none;width:100%;text-align:left;font-family:'Inter',sans-serif;
+  }
+  .acc-dot{
+    width:12px;height:12px;border-radius:50%;flex-shrink:0;
+  }
+  .acc-item:nth-child(1) .acc-dot{background:var(--grad-cool);}
+  .acc-item:nth-child(2) .acc-dot{background:var(--grad-warm);}
+  .acc-item:nth-child(3) .acc-dot{background:var(--grad-green);}
+  .acc-item:nth-child(4) .acc-dot{background:linear-gradient(135deg,#8B5CF6,#EC4899);}
+  .acc-item:nth-child(5) .acc-dot{background:linear-gradient(135deg,#0EA5E9,#22C55E);}
+  .acc-item:nth-child(6) .acc-dot{background:linear-gradient(135deg,#F59E0B,#EF4444);}
+  .acc-day{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;width:130px;flex-shrink:0;}
+  .acc-summary{color:var(--ink-soft);font-size:14.5px;flex:1;}
+  .acc-summary .time-preview{font-family:'JetBrains Mono',monospace;color:var(--ink-faint);font-size:13px;}
+  .acc-chevron{
+    width:32px;height:32px;border-radius:50%;background:var(--bg);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s ease;
+  }
+  .acc-item.open .acc-chevron{transform:rotate(180deg);background:rgba(79,70,229,0.1);border-color:transparent;}
+  .acc-chevron svg{width:14px;height:14px;}
+  .acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .acc-body-inner{padding:0 26px 26px 66px;display:flex;gap:40px;flex-wrap:wrap;}
+  .acc-detail .l{font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);margin-bottom:6px;}
+  .acc-detail .v{font-size:15.5px;font-weight:600;color:var(--ink);}
+
+  /* ===== Results ===== */
+  .results{background:linear-gradient(180deg,#0F1229,#171B3A);}
+  .results .eyebrow{background:rgba(255,255,255,0.08);color:#A5B4FC;}
+  .results .eyebrow::before{background:var(--lime);}
+  .results h2{color:#fff;font-size:34px;max-width:640px;}
+  .results-grid{margin-top:56px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .result-card{
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;
+    padding:30px 24px;backdrop-filter:blur(6px);
+  }
+  .result-card .n{font-family:'Space Grotesk',sans-serif;font-size:38px;font-weight:700;}
+  .result-card:nth-child(1) .n{color:#22D3EE;}
+  .result-card:nth-child(2) .n{color:#A78BFA;}
+  .result-card:nth-child(3) .n{color:#FB7185;}
+  .result-card:nth-child(4) .n{color:#4ADE80;}
+  .result-card .l{font-family:'JetBrains Mono',monospace;font-size:12px;color:#94A3C4;margin-top:8px;text-transform:uppercase;letter-spacing:.05em;}
+  .location-stats{margin-top:48px;}
+  .location-stats h3{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#A5B4FC;margin-bottom:22px;font-weight:500;}
+  .location-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+  .loc-stat-card{
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;
+    padding:28px 24px;backdrop-filter:blur(6px);position:relative;overflow:hidden;
+  }
+  .loc-stat-dot{width:38px;height:38px;border-radius:12px;margin-bottom:16px;}
+  .loc-stat-card .n{font-family:'Space Grotesk',sans-serif;font-size:34px;font-weight:700;color:#fff;}
+  .loc-stat-card .l{font-family:'JetBrains Mono',monospace;font-size:12px;color:#94A3C4;margin-top:8px;text-transform:uppercase;letter-spacing:.05em;}
+
+  .results-list{margin-top:56px;}
+  .results-list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:14px;}
+  .results-list-head h3{margin-bottom:0;}
+  .year-select-wrap{position:relative;display:inline-flex;align-items:center;}
+  .year-select{
+    appearance:none;-webkit-appearance:none;
+    background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);
+    color:#fff;font-family:'JetBrains Mono',monospace;font-size:13.5px;font-weight:600;
+    padding:10px 40px 10px 18px;border-radius:100px;cursor:pointer;
+  }
+  .year-select:focus{outline:none;border-color:#A5B4FC;}
+  .year-select option{background:#171B3A;color:#fff;}
+  .year-select-icon{
+    position:absolute;right:16px;width:12px;height:12px;color:#94A3C4;pointer-events:none;
+  }
+  .results-list h3{font-family:'JetBrains Mono',monospace;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:#A5B4FC;margin-bottom:22px;font-weight:500;}
+  .student-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .student-card{
+    background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:18px;
+    padding:22px 18px;text-align:center;backdrop-filter:blur(6px);position:relative;
+    transition:transform .25s ease, border-color .25s ease;
+  }
+  .student-card.ranked{
+    border-color:rgba(251,191,36,0.4);
+    background:linear-gradient(180deg,rgba(251,191,36,0.08),rgba(255,255,255,0.04));
+  }
+  .student-card.ranked .student-photo{margin-top:8px;}
+  .rank-badge{
+    position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+    display:flex;align-items:center;gap:5px;
+    padding:5px 14px;border-radius:100px;
+    background:linear-gradient(135deg,#FBBF24,#F59E0B);
+    color:#1F2937;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:11px;
+    letter-spacing:.04em;text-transform:uppercase;white-space:nowrap;
+    box-shadow:0 6px 14px -4px rgba(245,158,11,0.6);
+  }
+  .student-card:hover{transform:translateY(-4px);border-color:rgba(165,180,252,0.4);}
+  .student-photo{
+    width:76px;height:76px;border-radius:50%;margin:0 auto 16px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;color:#fff;
+    border:2px solid rgba(255,255,255,0.15);
+  }
+  .student-card:nth-child(1) .student-photo{background:var(--grad-cool);}
+  .student-card:nth-child(2) .student-photo{background:var(--grad-warm);}
+  .student-card:nth-child(3) .student-photo{background:linear-gradient(135deg,#8B5CF6,#EC4899);}
+  .student-card:nth-child(4) .student-photo{background:var(--grad-green);}
+  .student-name{color:#F1F5F9;font-weight:600;font-size:14.5px;margin-bottom:4px;}
+  .student-school{color:#94A3C4;font-size:12.5px;font-family:'JetBrains Mono',monospace;margin-bottom:10px;}
+  .student-grade{
+    display:inline-block;padding:4px 14px;border-radius:100px;background:rgba(74,222,128,0.14);
+    color:#4ADE80;font-weight:700;font-family:'JetBrains Mono',monospace;font-size:13px;
+  }
+
+  /* ===== Gallery ===== */
+  .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:180px;gap:16px;margin-top:48px;}
+  .gallery-grid div{
+    border-radius:18px;display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;color:rgba(255,255,255,0.85);
+    letter-spacing:.06em;text-transform:uppercase;position:relative;overflow:hidden;
+  }
+  .gallery-grid div:nth-child(1){grid-column:span 2;grid-row:span 2;background:var(--grad-cool);}
+  .gallery-grid div:nth-child(2){background:var(--grad-warm);}
+  .gallery-grid div:nth-child(3){background:linear-gradient(135deg,#8B5CF6,#EC4899);}
+  .gallery-grid div:nth-child(4){grid-column:span 2;background:var(--grad-green);}
+  .gallery-grid div:nth-child(5){background:linear-gradient(135deg,#0EA5E9,#22C55E);}
+
+  /* ===== Contact ===== */
+  .contact-card{
+    background:var(--grad-cool);border-radius:28px;padding:64px;position:relative;overflow:hidden;
+    display:grid;grid-template-columns:1fr 1fr;gap:56px;
+  }
+  .contact-card::before{
+    content:"";position:absolute;top:-100px;right:-60px;width:340px;height:340px;
+    background:radial-gradient(circle,rgba(255,255,255,0.18),transparent 70%);
+  }
+  .contact-info{position:relative;z-index:1;color:#fff;}
+  .contact-info .eyebrow{background:rgba(255,255,255,0.15);color:#fff;}
+  .contact-info .eyebrow::before{background:#fff;}
+  .contact-info h2{color:#fff;font-size:32px;margin-bottom:16px;}
+  .contact-info p{color:rgba(255,255,255,0.85);max-width:420px;margin-bottom:30px;}
+  .contact-line{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-top:1px solid rgba(255,255,255,0.2);}
+  .contact-line .lbl{font-family:'JetBrains Mono',monospace;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,0.7);width:100px;flex-shrink:0;padding-top:2px;}
+  .contact-line .val{font-size:15px;font-weight:600;}
+  form{position:relative;z-index:1;background:var(--surface);border-radius:20px;padding:32px;box-shadow:0 30px 60px -20px rgba(15,23,42,0.4);}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-family:'JetBrains Mono',monospace;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);margin-bottom:8px;}
+  .field input,.field textarea{
+    width:100%;border:1.5px solid var(--border);background:var(--bg);
+    padding:13px 16px;font-family:'Inter',sans-serif;font-size:15px;color:var(--ink);border-radius:12px;
+  }
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 4px rgba(79,70,229,0.12);}
+  .field textarea{resize:vertical;min-height:90px;}
+  .form-msg{margin-top:14px;font-size:13.5px;color:var(--lime);font-family:'JetBrains Mono',monospace;display:none;font-weight:600;}
+  .form-msg.show{display:block;}
+
+  footer{background:#0F1229;color:#94A3C4;padding:44px 0;}
+  footer .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;font-size:13.5px;}
+  footer .fbrand{color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;}
+
+  section[id]{scroll-margin-top:90px;}
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  @media(max-width:960px){
+    .hero .container{grid-template-columns:1fr;gap:48px;}
+    .about .container{grid-template-columns:1fr;}
+    .about-photo{max-width:320px;}
+    .tt-grid{grid-template-columns:repeat(2,1fr);}
+    .results-grid{grid-template-columns:repeat(2,1fr);}
+    .student-grid{grid-template-columns:repeat(2,1fr);}
+    .gallery-grid{grid-template-columns:repeat(2,1fr);}
+    .contact-card{grid-template-columns:1fr;padding:40px 28px;}
+    .nav-links{
+      position:fixed;top:82px;left:0;right:0;bottom:0;background:var(--bg);
+      flex-direction:column;justify-content:flex-start;padding:36px 28px;gap:26px;font-size:19px;
+      transform:translateX(100%);transition:transform .3s ease;
+    }
+    .nav-links.open{transform:translateX(0);}
+    .menu-toggle{display:block;}
+  }
+  @media(max-width:640px){
+    section{padding:70px 0;}
+    .tt-grid{grid-template-columns:1fr;}
+    .results-grid{grid-template-columns:1fr 1fr;}
+    .student-grid{grid-template-columns:1fr 1fr;}
+    .acc-head{gap:14px;padding:18px 18px;flex-wrap:wrap;}
+    .acc-day{width:auto;font-size:16px;}
+    .acc-summary{width:100%;order:3;font-size:13.5px;}
+    .acc-body-inner{padding:0 18px 22px 18px;gap:24px;}
+    .location-stats-grid{grid-template-columns:1fr;}
+  }
+  @media(prefers-reduced-motion:reduce){
+    *{animation-duration:0.01ms !important;transition-duration:0.01ms !important;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="container">
+    <div class="brand">
+      <div class="brand-mark">PW</div>
+      <div class="brand-name">Wickramasinghe</div>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#timetable">Timetable</a>
+      <a href="#results">Results</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#contact">Contact</a>
+      <a href="https://wa.me/94771234567" class="btn btn-primary">WhatsApp Us</a>
+    </div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<section class="hero" id="home">
+  <div class="container">
+    <div>
+      <div class="eyebrow">A/L Accounting &bull; Colombo</div>
+      <h1>Every number tells a story.<br><span class="grad-text">Learn to read it.</span></h1>
+      <p class="lede">Small batches, examiner-style marking, and a method built entirely around how the Department of Examinations actually grades A/L Accounting. Grade 12 and 13, in class and online.</p>
+      <div class="hero-ctas">
+        <a href="#contact" class="btn btn-primary">Reserve a Seat</a>
+        <a href="#timetable" class="btn btn-ghost">View Timetable</a>
+      </div>
+      <div class="pill-row">
+        <div class="pill"><span class="dot" style="background:var(--lime)"></span>92% A Passes 2024</div>
+        <div class="pill"><span class="dot" style="background:var(--indigo)"></span>3,200+ Students</div>
+        <div class="pill"><span class="dot" style="background:var(--coral)"></span>14 Years Teaching</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <div>
+          <div class="t1">Class A Pass Rate</div>
+          <div class="t2">2019 &ndash; 2024</div>
+        </div>
+        <div class="chart-badge">&uarr; 38%</div>
+      </div>
+      <svg class="chart-svg" viewBox="0 0 320 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#4F46E5"/>
+            <stop offset="100%" stop-color="#06B6D4"/>
+          </linearGradient>
+          <linearGradient id="fillGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.28"/>
+            <stop offset="100%" stop-color="#06B6D4" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path class="chart-fill" d="M0,110 L45,95 L90,88 L135,70 L180,55 L225,38 L270,25 L320,15 L320,140 L0,140 Z" fill="url(#fillGrad)"/>
+        <path class="chart-path" d="M0,110 L45,95 L90,88 L135,70 L180,55 L225,38 L270,25 L320,15" stroke="url(#lineGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle class="chart-dot" style="animation-delay:1.6s" cx="320" cy="15" r="6" fill="#06B6D4"/>
+      </svg>
+      <div class="chart-legend"><span>2019</span><span>2020</span><span>2021</span><span>2022</span><span>2023</span><span>2024</span></div>
+      <div class="chart-foot">
+        <div><div class="n">92%</div><div class="l">2024 A Pass</div></div>
+        <div><div class="n">61</div><div class="l">Island Ranks</div></div>
+        <div><div class="n">4.9</div><div class="l">Parent Rating</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="container">
+    <div class="reveal">
+      <div class="about-photo">PHOTO</div>
+      <div class="about-facts">
+        <div class="fact"><div class="n">B.Com</div><div class="l">Special (Colombo)</div></div>
+        <div class="fact"><div class="n">ACA</div><div class="l">Chartered Accountant</div></div>
+      </div>
+    </div>
+    <div class="about-body reveal">
+      <div class="eyebrow">About the Class</div>
+      <h2>Mr. Priyantha Wickramasinghe</h2>
+      <p>Fourteen years of teaching A/L Accounting to Grade 12 and 13 students across Colombo, with a syllabus built directly from examiner reports rather than assumptions. Every topic is taught the way it's actually asked &mdash; not the way it's usually taught.</p>
+      <p>Classes run in small batches so every student's answer scripts are checked personally, every week, with written feedback &mdash; the same way an audit would flag an error.</p>
+      <div class="chip-row">
+        <span class="chip">B.Com (Special) &mdash; Univ. of Colombo</span>
+        <span class="chip">ACA &mdash; ICASL</span>
+        <span class="chip">Former Visiting Lecturer, Aquinas</span>
+        <span class="chip">Author, "Ledger Logic" Series</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="timetable">
+  <div class="container">
+    <div class="eyebrow reveal">Weekly Schedule</div>
+    <h2 class="reveal" style="font-size:34px;">Timetable</h2>
+    <div class="location-tabs reveal">
+      <button class="loc-tab active" data-loc="colombo">Colombo Branch</button>
+      <button class="loc-tab" data-loc="nugegoda">Nugegoda Branch</button>
+      <button class="loc-tab" data-loc="kottawa">Kottawa Branch</button>
+    </div>
+    <div class="accordion">
+      <div class="acc-item reveal" data-loc="colombo">
+        <button class="acc-head">
+          <span class="acc-dot"></span>
+          <span class="acc-day">Monday</span>
+          <span class="acc-summary">Grade 13 &mdash; Batch A &nbsp;<span class="time-preview">4.00&ndash;6.00 pm</span></span>
+          <span class="acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-detail"><div class="l">Batch</div><div class="v">Grade 13 &mdash; Batch A</div></div>
+            <div class="acc-detail"><div class="l">Time</div><div class="v">4.00 pm &ndash; 6.00 pm</div></div>
+            <div class="acc-detail"><div class="l">Mode</div><div class="v">In-class</div></div>
+            <div class="acc-detail"><div class="l">Location</div><div class="v">Colombo Branch</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item reveal" data-loc="nugegoda">
+        <button class="acc-head">
+          <span class="acc-dot"></span>
+          <span class="acc-day">Tuesday</span>
+          <span class="acc-summary">Grade 12 &mdash; Batch A &nbsp;<span class="time-preview">4.00&ndash;6.00 pm</span></span>
+          <span class="acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-detail"><div class="l">Batch</div><div class="v">Grade 12 &mdash; Batch A</div></div>
+            <div class="acc-detail"><div class="l">Time</div><div class="v">4.00 pm &ndash; 6.00 pm</div></div>
+            <div class="acc-detail"><div class="l">Mode</div><div class="v">In-class</div></div>
+            <div class="acc-detail"><div class="l">Location</div><div class="v">Nugegoda Branch</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item reveal" data-loc="colombo">
+        <button class="acc-head">
+          <span class="acc-dot"></span>
+          <span class="acc-day">Wednesday</span>
+          <span class="acc-summary">Grade 13 &mdash; Batch B &nbsp;<span class="time-preview">5.00&ndash;7.00 pm</span></span>
+          <span class="acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-detail"><div class="l">Batch</div><div class="v">Grade 13 &mdash; Batch B</div></div>
+            <div class="acc-detail"><div class="l">Time</div><div class="v">5.00 pm &ndash; 7.00 pm</div></div>
+            <div class="acc-detail"><div class="l">Mode</div><div class="v">In-class</div></div>
+            <div class="acc-detail"><div class="l">Location</div><div class="v">Colombo Branch</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item reveal" data-loc="nugegoda">
+        <button class="acc-head">
+          <span class="acc-dot"></span>
+          <span class="acc-day">Thursday</span>
+          <span class="acc-summary">Grade 12 &mdash; Batch B &nbsp;<span class="time-preview">5.00&ndash;7.00 pm</span></span>
+          <span class="acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-detail"><div class="l">Batch</div><div class="v">Grade 12 &mdash; Batch B</div></div>
+            <div class="acc-detail"><div class="l">Time</div><div class="v">5.00 pm &ndash; 7.00 pm</div></div>
+            <div class="acc-detail"><div class="l">Mode</div><div class="v">In-class</div></div>
+            <div class="acc-detail"><div class="l">Location</div><div class="v">Nugegoda Branch</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item reveal" data-loc="kottawa">
+        <button class="acc-head">
+          <span class="acc-dot"></span>
+          <span class="acc-day">Saturday</span>
+          <span class="acc-summary">Grade 13 &mdash; Revision Clinic &nbsp;<span class="time-preview">9.00am&ndash;12.00pm</span></span>
+          <span class="acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-detail"><div class="l">Batch</div><div class="v">Grade 13 &mdash; Revision Clinic</div></div>
+            <div class="acc-detail"><div class="l">Time</div><div class="v">9.00 am &ndash; 12.00 pm</div></div>
+            <div class="acc-detail"><div class="l">Mode</div><div class="v">In-class</div></div>
+            <div class="acc-detail"><div class="l">Location</div><div class="v">Kottawa Branch</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="acc-item reveal" data-loc="kottawa">
+        <button class="acc-head">
+          <span class="acc-dot"></span>
+          <span class="acc-day">Sunday</span>
+          <span class="acc-summary">Grade 12 &mdash; Revision Clinic &nbsp;<span class="time-preview">9.00am&ndash;12.00pm</span></span>
+          <span class="acc-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></span>
+        </button>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <div class="acc-detail"><div class="l">Batch</div><div class="v">Grade 12 &mdash; Revision Clinic</div></div>
+            <div class="acc-detail"><div class="l">Time</div><div class="v">9.00 am &ndash; 12.00 pm</div></div>
+            <div class="acc-detail"><div class="l">Mode</div><div class="v">In-class</div></div>
+            <div class="acc-detail"><div class="l">Location</div><div class="v">Kottawa Branch</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="timetable-note reveal">Note: batches are kept small and fill on a first-registered basis. Online sessions are recorded and shared with registered students only.</p>
+  </div>
+</section>
+
+<section class="results" id="results">
+  <div class="container">
+    <div class="eyebrow reveal">Track Record</div>
+    <h2 class="reveal">Results are the only figure that matters at year-end.</h2>
+    <div class="results-grid reveal">
+      <div class="result-card"><div class="n counter" data-target="92" data-suffix="%">0%</div><div class="l">A Passes, 2024</div></div>
+      <div class="result-card"><div class="n counter" data-target="61" data-suffix="">0</div><div class="l">Island Ranks (2019&ndash;24)</div></div>
+      <div class="result-card"><div class="n counter" data-target="3200" data-suffix="+">0</div><div class="l">Students Taught</div></div>
+      <div class="result-card"><div class="n counter" data-target="14" data-suffix="">0</div><div class="l">Years Running</div></div>
+    </div>
+
+    <div class="location-stats reveal">
+      <h3>Students by Location</h3>
+      <div class="location-stats-grid">
+        <div class="loc-stat-card">
+          <div class="loc-stat-dot" style="background:var(--grad-cool)"></div>
+          <div class="n counter" data-target="140" data-suffix="+">0</div>
+          <div class="l">Colombo Branch</div>
+        </div>
+        <div class="loc-stat-card">
+          <div class="loc-stat-dot" style="background:var(--grad-warm)"></div>
+          <div class="n counter" data-target="95" data-suffix="+">0</div>
+          <div class="l">Nugegoda Branch</div>
+        </div>
+        <div class="loc-stat-card">
+          <div class="loc-stat-dot" style="background:var(--grad-green)"></div>
+          <div class="n counter" data-target="70" data-suffix="+">0</div>
+          <div class="l">Kottawa Branch</div>
+        </div>
+      </div>
+    </div>
+    <div class="results-list reveal">
+      <div class="results-list-head">
+        <h3>Selected Results</h3>
+        <div class="year-select-wrap">
+          <select id="yearSelect" class="year-select">
+            <option value="2024" selected>2024 A/L</option>
+            <option value="2023">2023 A/L</option>
+            <option value="2022">2022 A/L</option>
+          </select>
+          <svg class="year-select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+      </div>
+
+      <div class="student-grid" data-year="2024">
+        <div class="student-card ranked">
+          <div class="rank-badge">🏆 Island 1st</div>
+          <div class="student-photo">HP</div>
+          <div class="student-name">H.M.S. Perera</div>
+          <div class="student-school">Colombo</div>
+          <div class="student-grade">A</div>
+        </div>
+        <div class="student-card ranked">
+          <div class="rank-badge">🏆 Island 2nd</div>
+          <div class="student-photo">RF</div>
+          <div class="student-name">R.A.D. Fernando</div>
+          <div class="student-school">Gampaha</div>
+          <div class="student-grade">A</div>
+        </div>
+        <div class="student-card">
+          <div class="student-photo">KS</div>
+          <div class="student-name">K.G.N. Silva</div>
+          <div class="student-school">Colombo</div>
+          <div class="student-grade">A</div>
+        </div>
+        <div class="student-card">
+          <div class="student-photo">WJ</div>
+          <div class="student-name">W.A.T. Jayasuriya</div>
+          <div class="student-school">Kalutara</div>
+          <div class="student-grade">A</div>
+        </div>
+      </div>
+
+      <div class="student-grid" data-year="2023" style="display:none;">
+        <div class="student-card ranked">
+          <div class="rank-badge">🏆 Island 3rd</div>
+          <div class="student-photo">NP</div>
+          <div class="student-name">N.K. Peiris</div>
+          <div class="student-school">Colombo</div>
+          <div class="student-grade">A</div>
+        </div>
+        <div class="student-card">
+          <div class="student-photo">SD</div>
+          <div class="student-name">S.A.D. Dissanayake</div>
+          <div class="student-school">Nugegoda</div>
+          <div class="student-grade">A</div>
+        </div>
+        <div class="student-card">
+          <div class="student-photo">TM</div>
+          <div class="student-name">T.R. Mendis</div>
+          <div class="student-school">Kottawa</div>
+          <div class="student-grade">A</div>
+        </div>
+        <div class="student-card">
+          <div class="student-photo">CW</div>
+          <div class="student-name">C.B. Wijesinghe</div>
+          <div class="student-school">Colombo</div>
+          <div class="student-grade">A</div>
+        </div>
+      </div>
+
+      <div class="student-grid" data-year="2022" style="display:none;">
+        <div class="student-card ranked">
+          <div class="rank-badge">🏆 Island 1st</div>
+          <div class="student-photo">AJ</div>
+          <div class="student-name">A.M. Jayawardena</div>
+          <div class="student-school">Gampaha</div>
+          <div class="student-grade">A</div>
+        </div>
+        <div class="student-card">
+          <div class="student-photo">RG</div>
+          <div class="student-name">R.P. Gunasekara</div>
+          <div class="student-school">Colombo</div>
+          <div class="student-grade">A</div>
+        </div>
+        <div class="student-card">
+          <div class="student-photo">IH</div>
+          <div class="student-name">I.D. Herath</div>
+          <div class="student-school">Kottawa</div>
+          <div class="student-grade">A</div>
+        </div>
+        <div class="student-card">
+          <div class="student-photo">MK</div>
+          <div class="student-name">M.S. Karunaratne</div>
+          <div class="student-school">Nugegoda</div>
+          <div class="student-grade">A</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gallery">
+  <div class="container">
+    <div class="eyebrow reveal">In the Classroom</div>
+    <h2 class="reveal" style="font-size:34px;">Gallery</h2>
+    <div class="gallery-grid reveal">
+      <div>Class Photo</div>
+      <div>Model Exam Day</div>
+      <div>Revision Clinic</div>
+      <div>Award Ceremony</div>
+      <div>Study Materials</div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="container">
+    <div class="contact-card">
+      <div class="contact-info reveal">
+        <div class="eyebrow">Get In Touch</div>
+        <h2>Reserve your seat for next term.</h2>
+        <p>Batches are limited. Send a message or contact us directly on WhatsApp to confirm availability for Grade 12 or 13 classes.</p>
+        <div class="contact-line"><span class="lbl">Phone</span><span class="val">077 123 4567</span></div>
+        <div class="contact-line"><span class="lbl">WhatsApp</span><span class="val">077 123 4567</span></div>
+        <div class="contact-line"><span class="lbl">Email</span><span class="val">wickramasinghe.accounting@gmail.com</span></div>
+        <div class="contact-line"><span class="lbl">Location</span><span class="val">No. 45, Galle Road, Colombo 06</span></div>
+      </div>
+      <form id="contactForm" class="reveal">
+        <div class="field"><label for="name">Student / Parent Name</label><input id="name" type="text" placeholder="Your full name" required></div>
+        <div class="field"><label for="phone">Contact Number</label><input id="phone" type="tel" placeholder="07X XXX XXXX" required></div>
+        <div class="field"><label for="grade">Grade</label><input id="grade" type="text" placeholder="Grade 12 or 13" required></div>
+        <div class="field"><label for="message">Message</label><textarea id="message" placeholder="Tell us which batch you're interested in"></textarea></div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Send Inquiry</button>
+        <div class="form-msg" id="formMsg">Thank you &mdash; your inquiry has been noted. We'll contact you shortly.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="fbrand">Wickramasinghe A/L Accounting Class</div>
+    <div>&copy; 2026 &mdash; All rights reserved.</div>
+  </div>
+</footer>
+
+<script>
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+  menuToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+
+  const yearSelect = document.getElementById('yearSelect');
+  const yearGrids = document.querySelectorAll('.student-grid');
+  if(yearSelect){
+    yearSelect.addEventListener('change', () => {
+      const year = yearSelect.value;
+      yearGrids.forEach(grid => {
+        grid.style.display = (grid.dataset.year === year) ? '' : 'none';
+      });
+    });
+  }
+
+  const counters = document.querySelectorAll('.counter');
+  function animateCounter(el){
+    const target = parseInt(el.dataset.target, 10);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1400;
+    const start = performance.now();
+    function tick(now){
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const value = Math.floor(eased * target);
+      el.textContent = value.toLocaleString('en-US') + suffix;
+      if(progress < 1) requestAnimationFrame(tick);
+      else el.textContent = target.toLocaleString('en-US') + suffix;
+    }
+    requestAnimationFrame(tick);
+  }
+  const counterIo = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        animateCounter(entry.target);
+        counterIo.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  counters.forEach(el => counterIo.observe(el));
+
+  const locTabs = document.querySelectorAll('.loc-tab');
+  const allAccItems = document.querySelectorAll('.acc-item');
+
+  function openFirstVisible(){
+    let firstVisible = null;
+    allAccItems.forEach(item => {
+      item.classList.remove('open');
+      item.querySelector('.acc-body').style.maxHeight = null;
+      if(item.style.display !== 'none' && !firstVisible) firstVisible = item;
+    });
+    if(firstVisible){
+      firstVisible.classList.add('open');
+      const b = firstVisible.querySelector('.acc-body');
+      b.style.maxHeight = b.scrollHeight + 'px';
+    }
+  }
+
+  locTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      locTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const loc = tab.dataset.loc;
+      allAccItems.forEach(item => {
+        item.style.display = (item.dataset.loc === loc) ? '' : 'none';
+      });
+      openFirstVisible();
+    });
+  });
+
+  // initial state: show only the first tab's location
+  const initialLoc = locTabs[0] ? locTabs[0].dataset.loc : null;
+  if(initialLoc){
+    allAccItems.forEach(item => {
+      item.style.display = (item.dataset.loc === initialLoc) ? '' : 'none';
+    });
+  }
+
+  const accItems = document.querySelectorAll('.acc-item');
+  accItems.forEach(item => {
+    const head = item.querySelector('.acc-head');
+    const body = item.querySelector('.acc-body');
+    head.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      accItems.forEach(other => {
+        other.classList.remove('open');
+        other.querySelector('.acc-body').style.maxHeight = null;
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        body.style.maxHeight = body.scrollHeight + 'px';
+      }
+    });
+  });
+  // open the first visible item by default
+  openFirstVisible();
+
+  const form = document.getElementById('contactForm');
+  const msg = document.getElementById('formMsg');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    msg.classList.add('show');
+    form.reset();
+  });
+</script>
+
+</body>
+</html>
